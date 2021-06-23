@@ -1,4 +1,170 @@
-####################################
-# Experimental Parameters and Setup
-####################################
+###################################
+# Experiment Parameters and setup #
+###################################
+seed: 1234
+__set_seed: !apply:torch.manual_seed [!ref <seed>]
 
+
+#################################
+# Data files and pre-processing #
+#################################
+data_folder: ./ #data_folder: !PLACEHOLDER # e.g, /localscratch/fluent_speech_commands_dataset
+data_folder_rirs: !ref <data_folder>
+train_data_path: ../datasets/mockdata/lj
+train_filter: null
+valid_data_path: ../datasets/mockdata/lj
+valid_filter: null
+text_cleaners: ['english_cleaners']
+
+################################
+# Audio Parameters             #
+################################
+sample_rate: 16000
+hop_length: null
+win_length: null
+n_mel_channels: 128
+n_fft: 400
+n_stft: !ref <n_fft> // 2 + 1
+mel_fmin: 0.0
+mel_fmax: null
+mel_normalized: False
+
+################################
+# Optimization Hyperparameters #
+################################
+optim: adam
+optim_lr: 1.0
+
+
+################################
+# Model Parameters and model   #
+################################
+
+# Encoder parameters
+elayers: 4
+eunits: 1536
+init_enc_alpha: 1.0
+transformer_enc_dropout_rate: 0.2
+transformer_enc_positional_dropout_rate: 0.2
+transformer_enc_attn_dropout_rate: 0.2
+
+# Decoder parameters
+dlayers: 4
+dunits: 1536
+init_dec_alpha: 1.0
+transformer_dec_dropout_rate: 0.2
+transformer_dec_positional_dropout_rate: 0.2
+transformer_dec_attn_dropout_rate: 0.2
+
+
+# Attention parameters
+adim: 384
+aheads: 2
+
+# Position-Wise Embedding Parameters 
+positionwise_layer_type: conv1d
+positionwise_conv_kernel_size: 3
+
+# Duration Predictor Parameters
+duration_predictor_layers: 2
+duration_predictor_chans: 256
+duration_predictor_kernel_size: 3
+
+# Energy Predictor Parameters
+energy_predictor_layers: 2
+energy_predictor_chans: 256
+energy_predictor_kernel_size: 3
+energy_predictor_dropout: 0.5
+energy_embed_kernel_size: 1
+energy_embed_dropout: 0.0
+stop_gradient_from_energy_predictor: false
+
+# Pitch Predictor Parameters
+pitch_predictor_layers: 5
+pitch_predictor_chans: 256
+pitch_predictor_kernel_size: 5
+pitch_predictor_dropout: 0.5
+pitch_embed_kernel_size: 1
+pitch_embed_dropout: 0.0
+stop_gradient_from_pitch_predictor: true
+
+# Post-Net parameters
+postnet_layers: 5
+postnet_filts: 5
+postnet_chans: 256
+
+# Others
+use_masking: True
+use_scaled_pos_enc: True
+encoder_normalize_before: True
+decoder_normalize_before: True
+reduction_factor: 1
+init_type: xavier_uniform
+
+#model
+model: !new:speechbrain.lobes.models.synthesis.tacotron2.Tacotron2
+
+   
+    # encoder
+    elayers: !ref <eunits>
+    eunits: !ref <eunits>
+    init_enc_alpha: !ref <init_enc_alpha>
+    transformer_enc_dropout_rate: !ref <transformer_enc_dropout_rate>
+    transformer_enc_positional_dropout_rate: !ref <transformer_enc_positional_dropout_rate>
+    transformer_enc_attn_dropout_rate: !ref <transformer_enc_attn_dropout_rate>
+
+    # attention
+    adim: !ref <adim>
+    aheads: !ref <aheads>
+
+    # decoder
+    dlayers: !ref <dlayers>
+    dunits: !ref <dunits>
+    init_dec_alpha: !ref <init_dec_alpha>
+    transformer_dec_dropout_rate: !ref <transformer_dec_dropout_rate>
+    transformer_dec_positional_dropout_rate: !ref <transformer_dec_positional_dropout_rate>
+    transformer_dec_attn_dropout_rate: !ref <transformer_dec_attn_dropout_rate>
+
+    # Position-Wise Embedding Parameters 
+    positionwise_layer_type: !ref <positionwise_layer_type>
+    positionwise_conv_kernel_size: !ref <positionwise_conv_kernel_size>
+
+    # Duration Predictor Parameters
+    duration_predictor_layers: !ref <duration_predictor_layers>
+    duration_predictor_chans: !ref <duration_predictor_chans>
+    duration_predictor_kernel_size: !ref <duration_predictor_kernel_size>
+
+    # Energy Predictor Parameters
+    energy_predictor_layers: !ref <energy_predictor_layers>
+    energy_predictor_chans: !ref <energy_predictor_chans>
+    energy_predictor_kernel_size: !ref <energy_predictor_kernel_size>
+    energy_predictor_dropout: !ref <energy_predictor_dropout>
+    energy_embed_kernel_size: !ref <energy_embed_kernel_size>
+    energy_embed_dropout: !ref <energy_embed_dropout>
+    stop_gradient_from_energy_predictor: !ref <stop_gradient_from_energy_predictor>
+
+    # Pitch Predictor Parameters
+    pitch_predictor_layers: !ref <pitch_predictor_layers>
+    pitch_predictor_chans: !ref <pitch_predictor_chans>
+    pitch_predictor_kernel_size: !ref <pitch_predictor_kernel_size>
+    pitch_predictor_dropout: !ref <pitch_predictor_dropout>
+    pitch_embed_kernel_size: !ref <pitch_embed_kernel_size>
+    pitch_embed_dropout: !ref <pitch_embed_dropout>
+    stop_gradient_from_pitch_predictor: !ref <stop_gradient_from_pitch_predictor>
+
+    # Post-Net parameters
+    postnet_layers: !ref <postnet_layers>
+    postnet_filts: !ref <postnet_filts>
+    postnet_chans: !ref <postnet_chans>
+
+    # Others
+    use_masking: !ref <use_masking>
+    use_scaled_pos_enc: !ref <use_scaled_pos_enc>
+    encoder_normalize_before: !ref <encoder_normalize_before>
+    decoder_normalize_before: !ref <decoder_normalize_before>
+    reduction_factor: !ref <reduction_factor>
+    init_type: !ref <init_type> 
+
+
+modules:
+    model: !ref <model>
