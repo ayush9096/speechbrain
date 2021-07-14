@@ -40,6 +40,9 @@ optim_lr: 1.0
 # Model Parameters and model   #
 ################################
 
+idim: 50
+odim: 80
+
 # Encoder parameters
 elayers: 4
 eunits: 1536
@@ -102,9 +105,11 @@ reduction_factor: 1
 init_type: xavier_uniform
 
 #model
-model: !new:speechbrain.lobes.models.synthesis.tacotron2.Tacotron2
+model: !new:speechbrain.lobes.models.synthesis.fastspeech2.FastSpeech2
 
-   
+    idim: !ref <idim>
+    odim: !ref <odim>
+
     # encoder
     elayers: !ref <eunits>
     eunits: !ref <eunits>
