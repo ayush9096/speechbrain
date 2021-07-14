@@ -1,6 +1,5 @@
 """
-Neural Network Module for FastSpeech2 : Fast And
-High Quality End-to-End Text to Speech
+Neural Network Module for FastSpeech2 : Fast And High Quality End-to-End Text to Speech
 
 Authors
 * Ayush Agarwal 2021
@@ -10,12 +9,14 @@ Authors
 import torch
 from torch import nn
 from torch.nn import functional as F
-from torch.nn.modules import loss
-from torch.nn.modules.normalization import LayerNorm
+from speechbrain.lobes.models.synthesis.fastspeech2.helper.transformer_encoder import LayerNorm
 
 from speechbrain.lobes.models.synthesis.fastspeech2.helper.duration_predictor import DurationPredictor, DurationPredictorLoss
 from speechbrain.lobes.models.synthesis.fastspeech2.helper.length_regulator import LengthRegulator
 from speechbrain.lobes.models.synthesis.fastspeech2.helper.variance_predictor import VariancePredictor
+from speechbrain.lobes.models.synthesis.fastspeech2.helper.embedding import PositionalEncoding, ScaledPositionalEncoding
+from speechbrain.lobes.models.synthesis.fastspeech2.helper.transformer_encoder import Encoder as TransformerEncoder
+from speechbrain.lobes.models.synthesis.fastspeech2.helper.postnet import Postnet
 
 class FastSpeech2(nn.Module):
 
@@ -90,6 +91,9 @@ class FastSpeech2(nn.Module):
 
         self.padding_idx = 0
         
+        # Positional Encoding Class
+        pos_enc_class = (ScaledPositionalEncoding if self.use_scaled_pos_enc else PositionalEncoding)
+
         # Encoder
         encoder_input_layer = torch.nn.Embedding(
             num_embeddings=idim, embedding_dim=adim, padding_idx=self.padding_idx
@@ -189,7 +193,7 @@ class FastSpeech2(nn.Module):
         self.postnet = (
             None
             if postnet_layers == 0
-            else PostNet(
+            else Postnet(
                 idim=adim,
                 odim=odim,
                 n_layers=postnet_layers,

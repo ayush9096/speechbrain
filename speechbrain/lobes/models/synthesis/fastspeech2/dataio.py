@@ -6,7 +6,7 @@
 
 """
 
-# from speechbrain.lobes.models.synthesis.dataio import load_datasets
+from speechbrain.lobes.models.synthesis.dataio import load_datasets
 import speechbrain as sb
 import torch
 from torchaudio import transforms
@@ -117,7 +117,21 @@ def dataset_prep(dataset, hparams):
     )
 
 
+def dataio_prepare(hparams):
+    """
+    This function prepares the datasets to be used in the brain class.
+    It also defines the Data-Preprocessing pipeline through user-defined functions.
+    ----------
+    Arguments: 
+        hparams: dict
+            model hyperparameters
+    ----------
+    Returns:
+        dataset: tuple
+            a tuple of data loaders (train_data_loader, valid_data_loader, test_data_loader)
+    """
 
+    return load_datasets(hparams, dataset_prep)
 
 
 
